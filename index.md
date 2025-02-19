@@ -32,10 +32,13 @@ Menurut World Bank, produksi sampah global mencapai 2,01 miliar ton per tahun, d
 GreenSortAI adalah aplikasi berbasis AI dan cloud yang membantu pengguna memilah sampah dengan benar, memberikan rekomendasi daur ulang, serta menghubungkan pengguna dengan bank sampah.
 
 ### 5. Analisis Kompetitor
-| Nama Produk       | Kelebihan                                     | Kekurangan                              |
-|-------------------|-----------------------------------------------|-----------------------------------------|
-| RecycleNation     | Memiliki database lokasi daur ulang yang luas | Tidak memiliki fitur AI untuk identifikasi sampah |
-| TrashBot          | Pemilahan sampah otomatis                    | Mahal dan sulit diadopsi oleh individu  |
-| Litterati         | Memiliki komunitas global yang aktif          | Tidak memiliki fitur rekomendasi daur ulang |
+
+**Tabel Analisis Kompetitor:**
+
+Nama Produk | Kelebihan | Kekurangan
+--- | --- | ---
+RecycleNation | Memiliki database lokasi daur ulang yang luas | Tidak memiliki fitur AI untuk identifikasi sampah
+TrashBot | Pemilahan sampah otomatis | Mahal dan sulit diadopsi oleh individu
+Litterati | Memiliki komunitas global yang aktif | Tidak memiliki fitur rekomendasi daur ulang
 
 GreenSortAI memiliki keunggulan dengan penggunaan AI untuk memilah sampah otomatis, memberikan rekomendasi daur ulang, dan menyediakan koneksi dengan bank sampah secara langsung.
