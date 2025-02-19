@@ -1,22 +1,13 @@
-# Nama Kelompok
-**Kelompok Eko**
-
-## Anggota dan NIM Kelompok
+## Kelompok Eko
 - **Ketua Kelompok**: Varick Zahir Sarjiman - 22/496418/TK/54384
 - **Anggota 1**: Stephanus Edward Parulian - 21/473073/TK/52122
 - **Anggota 2**: Muhammad Fajrulfalaq Izzulfirdausyah Suryaprabandaru - 22/494174/TK/54184
 
 ## Project Senior Project TI
-
-**GreenSortAI**
-
-## Instansi
 **Departemen Teknologi Elektro dan Teknologi Informasi**  
 **Fakultas Teknik, Universitas Gadjah Mada**
 
 ---
-
-## Modul 1
 
 ### 1. Nama Produk
 **GreenSortAI**
