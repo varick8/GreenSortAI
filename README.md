@@ -5,4 +5,3 @@ GreenSortAI adalah aplikasi berbasis AI dan cloud yang membantu pengguna memilah
 **Ketua Kelompok**: 
 - **Anggota 1**: 
 - **Anggota 2**: 
-- **Anggota 3**: 
