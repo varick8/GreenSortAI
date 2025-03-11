@@ -98,7 +98,6 @@ export default function ScanSampah() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
             </div>
-
             {prediction && prediction.length > 0 && (
               <div className="mt-6">
                 <h2 className="text-lg font-semibold mb-3">Hasil Prediksi:</h2>
