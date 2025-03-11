@@ -22,8 +22,8 @@ export default function Dashboard() {
   if (loading) {
     return <Loading />; // Show loading screen while loading is true
   }
-
-  return ( 
+    
+  return (
     <div className="dashboard">
       <h1>GreenSortAI</h1>
       <h2>Teknologi AI Untuk Daur Ulang yang Lebih Baik</h2>
