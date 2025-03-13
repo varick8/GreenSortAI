@@ -1,0 +1,44 @@
+# Binaries and build artifacts
+*.exe
+*.out
+*.test
+*.a
+*.o
+*.so
+
+# Go workspace and dependencies
+/bin/
+/pkg/
+/vendor/
+
+# Logs and debugging
+*.log
+*.trace
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Go modules and cache
+go.sum
+go.work
+go.work.sum
+/go/pkg/
+/go/bin/
+/go/src/
+
+# Coverage reports
+coverage.out
+*.coverprofile
+
+# Temporary files
+*.tmp
+*.bak
+
+# Environment files
+.env
+.env.local
+.DS_Store
+Thumbs.db
