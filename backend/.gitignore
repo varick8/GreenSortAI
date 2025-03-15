@@ -34,3 +34,6 @@ coverage.out
 .env.local
 .DS_Store
 Thumbs.db
+
+/static/uploads/trash/*
+/static/uploads/library/*
