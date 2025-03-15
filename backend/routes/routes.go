@@ -2,28 +2,35 @@ package routes
 
 import (
 	"GreenSortAI/controllers"
-	"time"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
-func SetupRouter() *gin.Engine {
-	r := gin.Default()
+func welcome(c *fiber.Ctx) error {
+	return c.SendString("Kelompok Eko Backend Service")
+}
 
-	// CORS Middleware
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"}, // Allow frontend URL
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
+func SetupRoutes(app *fiber.App) {
+	// Welcome endpoint
+	app.Get("/api", welcome)
 
-	// Routes
-	r.GET("/auth/google/login", controllers.GoogleLoginHandler)
-	r.GET("/auth/google/callback", controllers.GoogleCallbackHandler)
+	app.Static("api/uploads", "./static/uploads/trash")
 
-	return r
+	// Auth endpoints
+	app.Get("/api/auth/google/login", controllers.GoogleLoginHandler)
+	app.Get("/api/auth/google/callback", controllers.GoogleCallbackHandler)
+
+	// Trash endpoints
+	app.Post("/api/trash/scan/:user_id", controllers.ScanTrash)
+	app.Get("/api/trash/user/:user_id", controllers.TrashDetail)
+	app.Static("api/trash/image", "./static/uploads/trash")
+	app.Delete("/api/trash/:id", controllers.TrashDelete)
+
+	// Library endpoints
+	app.Post("/api/library/add/:user_id", controllers.AddLibrary)
+	app.Static("api/library/image", "./static/uploads/library")
+	app.Get("/api/library", controllers.AllLibrary)
+	app.Get("/api/library/:id", controllers.LibraryDetail)
+	app.Delete("/api/library/:id", controllers.LibraryDelete)
+	app.Put("/api/library/edit/:user_id/:library_id", controllers.EditLibrary)
 }
