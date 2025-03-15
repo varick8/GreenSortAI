@@ -21,14 +21,6 @@
 *.swp
 *.swo
 
-# Go modules and cache
-go.sum
-go.work
-go.work.sum
-/go/pkg/
-/go/bin/
-/go/src/
-
 # Coverage reports
 coverage.out
 *.coverprofile
