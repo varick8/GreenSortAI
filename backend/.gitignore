@@ -35,7 +35,9 @@ coverage.out
 .DS_Store
 Thumbs.db
 
-/static/uploads/trash/*
-!/static/uploads/trash/.gitignore
-/static/uploads/library/*
-!/static/uploads/library/.gitignore
+# Keep empty directories but ignore their contents
+static/uploads/trash/*
+static/uploads/library/*
+# Don't ignore .gitkeep files
+!static/uploads/trash/.gitkeep
+!static/uploads/library/.gitkeep
