@@ -36,4 +36,6 @@ coverage.out
 Thumbs.db
 
 /static/uploads/trash/*
+!/static/uploads/trash/.gitignore
 /static/uploads/library/*
+!/static/uploads/library/.gitignore
