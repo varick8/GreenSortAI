@@ -16,7 +16,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, closeModal }) => {
             console.log("codeResponse", codeResponse);
             try {
                 const tokenResponse = await axios.get(
-                    `http://localhost:8080/auth/google/callback?code=${codeResponse.code}`
+                    `http://localhost:8080/api/auth/google/callback?code=${codeResponse.code}`
                 );
                 
                 console.log("tokenResponse", tokenResponse.data);
