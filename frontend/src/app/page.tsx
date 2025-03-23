@@ -7,13 +7,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading when the page refreshes
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000); // Show the loading screen for 3 seconds
-  }, []);
-
-  useEffect(() => {
     // Set loading to false after the component mounts
     setLoading(false);
   }, []);

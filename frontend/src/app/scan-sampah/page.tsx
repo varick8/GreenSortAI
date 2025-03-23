@@ -22,11 +22,6 @@ export default function ScanSampah() {
     loadModel();
   }, []);
 
-  useEffect(() => {
-    // Set loading to false after the component mounts
-    setIsLoading(false);
-  }, []);
-
   async function loadModel() {
     if (!modelURL) {
       setError("Model URL is missing. Please check your environment variables.");
