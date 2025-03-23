@@ -34,7 +34,7 @@ export default function RootLayout({
       >
         <GoogleOAuthProvider clientId={clientId}>
           <Navbar />
-          {children}
+          <main className="flex-grow bg-gray-50">{children}</main>
         </GoogleOAuthProvider>
       </body>
     </html>
