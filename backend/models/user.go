@@ -12,7 +12,7 @@ type User struct {
 	PictureURL string    `gorm:"uniqueIndex;type:varchar(255);not null" json:"picture_url"`
 	Role       string    `gorm:"type:varchar(20);not null;default:'user'" json:"role"`
 	CreatedAt  time.Time `gorm:"autoCreateTime;not null" json:"created_at"`
-	Library    []Library `gorm:"many2many:publish" json:"library"`
+	Library    []Library `gorm:"foreignKey:UserID" json:"library"`
 	Trash      []Trash   `gorm:"foreignKey:UserID" json:"trash"`
 }
 
