@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function DetailPage({ params }: { params: { id: string } }) {
   // Static detail data; in a real app, fetch data based on params.id
-  const cardDetails = {
+    const cardDetails: Record<string, { title: string; description: string; image: string }> = {
     "1": {
       title: "Mengurangi Food Waste",
       description: "Detail lengkap untuk informasi 1.",
