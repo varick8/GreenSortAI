@@ -9,7 +9,7 @@ import LoginModal from "../auth/LoginModal";
 import Profile from "./Profile";
 import { parse } from "cookie";
 import { jwtDecode } from "jwt-decode"; 
-import LoadingScreen from "../Loading";
+import HamburgerMenu from "./Hamburger";
 
 // Define a custom interface for the decoded token
 interface User {
@@ -25,13 +25,6 @@ const Navbar = () => {
 
     const toggleLogin = () => setIsLoginOpen(!isLoginOpen);
     const closeLogin = () => setIsLoginOpen(false);
-
-    useEffect(() => {
-        // Simulate loading when the page refreshes
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1500); // Show the loading screen for 1.5 seconds
-      }, []);
 
     useEffect(() => {
         const initializeUser = async () => {
@@ -66,32 +59,35 @@ const Navbar = () => {
                 <Container>
                     <div className="flex items-center justify-between gap-3 md:gap-0">
                         <div className="flex items-center gap-8 md:gap-12">
-                            <div className="hidden md:flex items-center space-x-2">
+                            <div className="items-center space-x-2">
                                 <Link href="/" className="flex items-center space-x-2">
                                     <img src={"/recycle.svg"} alt="logo" width={30} height={30} />
-                                    <div className="font-semibold">GreenSortAI</div>
+                                    <div className="font-semibold text-black">GreenSortAI</div>
                                 </Link>
                             </div>
-                            <NavLink href="/scan-sampah">Scan Sampah</NavLink>
-                            <NavLink href="/peta">Peta</NavLink>
-                            <NavLink href="/perpustakaan">Perpustakaan</NavLink>
+                            <div className="hidden lg:flex items-center gap-8 md:gap-12">
+                                <NavLink href="/scan-sampah">Scan Sampah</NavLink>
+                                <NavLink href="/peta">Peta</NavLink>
+                                <NavLink href="/perpustakaan">Perpustakaan</NavLink>
+                            </div>
                         </div>
 
-                        {!isLoading && (
-                            <div className="flex items-center">
-                                {user ? (
-                                    <Profile name={user.name} picture={user.picture} email={user.email} />
-                                ) : (
-                                    <button
-                                        className="flex items-center space-x-2 px-4 py-2 font-normal text-white bg-green-500 rounded-md hover:bg-green-600 transition"
-                                        onClick={toggleLogin}
-                                    >
-                                        <FaUser className="text-white text-lg" />
-                                        <span>Mulai</span>
-                                    </button>
-                                )}
-                            </div>
-                        )}
+                        {/* Profile or Login Button (Hidden on tablets and smaller) */}
+                        <div className="flex items-center gap-4 md:gap-6">
+                            {!isLoading && user ? (
+                                <Profile name={user.name} picture={user.picture} email={user.email} />
+                            ) : (
+                                <button
+                                    className="hidden md:flex items-center space-x-2 px-4 py-2 font-normal text-white bg-green-500 rounded-md hover:bg-green-600 transition"
+                                    onClick={toggleLogin}
+                                >
+                                    <FaUser className="text-white text-lg" />
+                                    <span>Mulai</span>
+                                </button>
+                            )}
+
+                            <HamburgerMenu />
+                        </div>
                     </div>
                 </Container>
             </div>

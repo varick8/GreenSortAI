@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { FaSignOutAlt } from "react-icons/fa";
 import { MdHistory, MdPerson } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
@@ -17,6 +18,7 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ name, picture, email }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const pathname = usePathname();
 
     const handleLogout = () => {
         Cookies.remove("auth_token");
@@ -25,7 +27,7 @@ const Profile: React.FC<ProfileProps> = ({ name, picture, email }) => {
     };
 
     const handleMenuClick = () => {
-        setIsOpen(false); // Close dropdown when menu item is clicked
+        setIsOpen(false);
     };
 
     return (
@@ -34,9 +36,8 @@ const Profile: React.FC<ProfileProps> = ({ name, picture, email }) => {
             onMouseEnter={() => setIsOpen(true)}
             onMouseLeave={() => setIsOpen(false)}
         >
-            {/* Button with profile picture */}
             <button
-                className="flex items-center justify-between px-4 py-2 font-normal text-white bg-green-500 rounded-md hover:bg-green-600 transition min-w-[150px] w-full max-w-[800px]"
+                className="flex items-center justify-between px-2 md:px-3 py-2 font-normal text-white bg-green-500 rounded-md hover:bg-green-600 transition w-full max-w-[800px]"
             >
                 <div className="flex items-center space-x-2 overflow-hidden">
                     {picture ? (
@@ -52,17 +53,16 @@ const Profile: React.FC<ProfileProps> = ({ name, picture, email }) => {
                             <MdPerson className="text-white text-lg" />
                         </div>
                     )}
-                    <span className="whitespace-nowrap overflow-hidden text-ellipsis">{name || "Nama Pengguna"}</span>
+                    <span className="hidden md:inline whitespace-nowrap overflow-hidden text-ellipsis">{name || "Nama Pengguna"}</span>
                 </div>
 
                 <IoIosArrowDown
-                    className={`text-white text-lg transition-transform duration-200 ml-8 flex-shrink-0 ${isOpen ? "rotate-180" : "rotate-0"}`}
+                    className={`text-white text-lg transition-transform duration-200 flex-shrink-0 ml-1 md:ml-4 lg:ml-8 ${isOpen ? "rotate-180" : "rotate-0"}`}
                 />
             </button>
 
             {isOpen && (
                 <div className="absolute right-0 mt-2 bg-white rounded-lg shadow-lg border z-50 p-4 min-w-[250px] w-full">
-                    {/* User Info Section */}
                     <div className="p-4 border-b flex items-center space-x-3">
                         {picture ? (
                             <Image
@@ -78,25 +78,28 @@ const Profile: React.FC<ProfileProps> = ({ name, picture, email }) => {
                             </div>
                         )}
                         <div className="overflow-hidden">
-                            <p className="font-medium whitespace-normal break-words">{name || "Nama Pengguna"}</p>
+                            <p className="font-medium whitespace-nowrap overflow-hidden text-ellipsis text-black">{name || "Nama Pengguna"}</p>
                             <p className="text-gray-500 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
                                 {email || "Email Pengguna"}
                             </p>
                         </div>
                     </div>
 
-                    {/* Dropdown Menu */}
                     <ul className="py-2">
                         <li>
-                            <Link href="/profil" onClick={handleMenuClick} className="flex items-center px-4 py-2 hover:bg-gray-100 rounded">
-                                <MdPerson className="mr-2 text-gray-700" />
-                                Profil
+                            <Link href="/profil" onClick={handleMenuClick}>
+                                <span className={`flex items-center px-4 py-2 rounded cursor-pointer transition ${pathname === "/profil" ? "text-green-600" : "text-gray-700 hover:text-green-600 hover:bg-gray-100"}`}>
+                                    <MdPerson className={`mr-2 ${pathname === "/profil" ? "text-green-600" : "hover:text-green-600"}`} />
+                                    Profil
+                                </span>
                             </Link>
                         </li>
                         <li>
-                            <Link href="/riwayat" onClick={handleMenuClick} className="flex items-center px-4 py-2 hover:bg-gray-100 rounded">
-                                <MdHistory className="mr-2 text-gray-700" />
-                                Riwayat
+                            <Link href="/riwayat" onClick={handleMenuClick}>
+                                <span className={`flex items-center px-4 py-2 rounded cursor-pointer transition ${pathname === "/riwayat" ? "text-green-600" : "text-gray-700 hover:text-green-600 hover:bg-gray-100"}`}>
+                                    <MdHistory className={`mr-2 ${pathname === "/riwayat" ? "text-green-600" : "hover:text-green-600"}`} />
+                                    Riwayat
+                                </span>
                             </Link>
                         </li>
                         <li>
@@ -112,4 +115,4 @@ const Profile: React.FC<ProfileProps> = ({ name, picture, email }) => {
     );
 };
 
-export default Profile
+export default Profile;

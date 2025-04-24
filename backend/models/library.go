@@ -13,7 +13,7 @@ type Library struct {
 	Content  string    `gorm:"not null" json:"content"`
 	Date     string    `gorm:"type:date;not null" json:"date"`
 	Source   string    `gorm:"not null" json:"source"`
-	User     []User    `gorm:"many2many:publish" json:"user"`
+	UserID   string    `gorm:"type:varchar(255);not null" json:"user_id"`
 }
 
 func (Library) TableName() string {

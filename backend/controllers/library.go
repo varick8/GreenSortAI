@@ -145,7 +145,7 @@ func AddLibrary(c *fiber.Ctx) error {
 	record.Image = filenameOnly
 
 	// Associate the Library with the User in the many-to-many relationship
-	record.User = []models.User{user} // Associate the user
+	record.UserID = user.ID
 
 	// Save record to the database
 	result := database.DB.Create(record)
@@ -248,36 +248,20 @@ func LibraryDelete(c *fiber.Ctx) error {
 		return c.Status(404).JSON(context)
 	}
 
-	// Remove the associated image file
-	if record.Image != "" {
-		imagePath := filepath.Join("./static/uploads/library", record.Image)
-		if err := os.Remove(imagePath); err != nil && !os.IsNotExist(err) {
-			log.Println("Error deleting image file:", err)
-		}
-	}
-
-	// Remove associations with users in the many-to-many relationship
-	if err := database.DB.Model(&record).Association("User").Clear(); err != nil {
-		log.Println("Error clearing user associations:", err)
-		context["statusText"] = "Error"
-		context["msg"] = "Failed to clear user associations."
-		return c.Status(500).JSON(context)
-	}
-
-	// Delete related records in the "publish" table before deleting the library record
-	if err := database.DB.Table("publish").Where("library_id = ?", parsedID).Delete(nil).Error; err != nil {
-		log.Println("Error deleting related records in publish table:", err)
-		context["statusText"] = "Error"
-		context["msg"] = "Failed to delete related publish records."
-		return c.Status(500).JSON(context)
-	}
-
 	// Delete the record from the database
 	if err := database.DB.Delete(&record).Error; err != nil {
 		log.Println("Error deleting record:", err)
 		context["statusText"] = "Error"
 		context["msg"] = "Failed to delete record."
 		return c.Status(500).JSON(context)
+	}
+
+	// Remove the associated image file
+	if record.Image != "" {
+		imagePath := filepath.Join("./static/uploads/library", record.Image)
+		if err := os.Remove(imagePath); err != nil && !os.IsNotExist(err) {
+			log.Println("Error deleting image file:", err)
+		}
 	}
 
 	context["statusText"] = "Ok"

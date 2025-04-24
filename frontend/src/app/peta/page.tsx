@@ -1,10 +1,21 @@
 "use client";
-import { useState } from "react";
+import Loading from "@/components/Loading";
+import { useState, useEffect } from "react";
 
 const categories = ["TPA", "TPS3R", "Bank Sampah", "Komposting", "Produk Kreatif", "Sumber Energi"];
 
 export default function Peta() {
     const [selectedCategory, setSelectedCategory] = useState<string>("TPA");
+    const [loading, setLoading] = useState(true);
+    
+    useEffect(() => {
+        // Set loading to false after the component mounts
+        setLoading(false);
+    }, []);
+    
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <div className="w-screen flex flex-col items-center">
