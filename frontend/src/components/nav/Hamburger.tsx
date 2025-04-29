@@ -77,7 +77,11 @@ const HamburgerMenu = () => {
                                 }`}
                                 onClick={closeMenu}
                             >
-                                <FaTrashRestore className="text-gray-400 group-hover:text-green-500" />
+                                <FaTrashRestore 
+                                className={`${
+                                    pathname === "/scan-sampah" ? "text-green-500" : "text-gray-400 group-hover:text-green-500"
+                                  }`} 
+                                />
                                 <span>Scan Sampah</span>
                             </Link>
                         </li>
@@ -89,7 +93,11 @@ const HamburgerMenu = () => {
                                 }`}
                                 onClick={closeMenu}
                             >
-                                <FaMapMarkedAlt className="text-gray-400 group-hover:text-blue-500" />
+                                <FaMapMarkedAlt 
+                                 className={`${
+                                    pathname === "/peta" ? "text-blue-500" : "text-gray-400 group-hover:text-blue-500"
+                                  }`}
+                                />
                                 <span>Peta</span>
                             </Link>
                         </li>
@@ -101,7 +109,11 @@ const HamburgerMenu = () => {
                                 }`}
                                 onClick={closeMenu}
                             >
-                                <FaBook className="text-gray-400 group-hover:text-orange-500" />
+                                <FaBook 
+                                 className={`${
+                                    pathname === "/perpustakaan" ? "text-orange-500" : "text-gray-400 group-hover:text-orange-500"
+                                  }`}
+                                />
                                 <span>Perpustakaan</span>
                             </Link>
                         </li>
