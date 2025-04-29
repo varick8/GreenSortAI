@@ -47,6 +47,26 @@ export default function Riwayat() {
         };
         
         window.addEventListener('resize', handleResize);
+
+        const fetchTrashData = async (userId: string) => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/trash/user/${userId}`);
+                const data = await response.json();
+        
+                if (data.statusText === "Ok") {
+                    const sortedRecords = data.data.sort((a: TrashRecord, b: TrashRecord) => 
+                        new Date(b.time).getTime() - new Date(a.time).getTime()
+                    );
+                    setTrashRecords(sortedRecords);
+                } else {
+                    console.error("Error fetching trash records:", data.msg);
+                }
+            } catch (error) {
+                console.error("Error fetching trash data:", error);
+            } finally {
+            setLoading(false);
+            }
+        };    
         
         const initializeUser = async () => {
             try {
@@ -80,24 +100,6 @@ export default function Riwayat() {
         };
     }, [router]);
 
-    const fetchTrashData = async (userId: string) => {
-        try {
-            const response = await fetch(`http://localhost:8080/api/trash/user/${userId}`);
-            const data = await response.json();
-    
-            if (data.statusText === "Ok") {
-                const sortedRecords = data.data.sort((a: TrashRecord, b: TrashRecord) => 
-                    new Date(b.time).getTime() - new Date(a.time).getTime()
-                );
-                setTrashRecords(sortedRecords);
-            } else {
-                console.error("Error fetching trash records:", data.msg);
-            }
-        } catch (error) {
-            console.error("Error fetching trash data:", error);
-        }
-    };    
-
     // Pagination logic with dynamic records per page
     const recordsPerPage = getRecordsPerPage();
     const indexOfLastRecord = currentPage * recordsPerPage;
@@ -112,12 +114,13 @@ export default function Riwayat() {
     const prevPage = () => {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
+    
 
     if (loading) return <Loading />;
     if (!user) return <Loading />;
 
     return (
-        <div className="p-4 md:p-6 lg:p-4 flex flex-col items-center justify-center bg-white">
+        <div className="p-4 md:p-6 lg:p-4 flex flex-col items-center bg-white min-h-screen">
             <div className="w-full max-w-full md:max-w-6xl px-2 md:px-6 lg:px-4 py-4">
                 <h1 className="text-2xl md:text-3xl lg:text-2xl font-bold text-black">Riwayat</h1>
                 <p className="text-base md:text-lg lg:text-base font-semibold text-blue-900 mt-2">

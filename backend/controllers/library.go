@@ -178,6 +178,8 @@ func AllLibrary(c *fiber.Ctx) error {
 
 	db.Find(&records)
 
+	db.Order("date desc").Find(&records)
+
 	context["library_records"] = records
 
 	c.Status(200)

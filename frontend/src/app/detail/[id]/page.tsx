@@ -1,9 +1,19 @@
 "use client";
 
+import Loading from "@/components/Loading";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function DetailPage({ params }: { params: { id: string } }) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }, []);
+  
+    if (loading) return <Loading />;
   // Static detail data; in a real app, fetch data based on params.id
     const cardDetails: Record<string, { title: string; description: string; image: string }> = {
     "1": {

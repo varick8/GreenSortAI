@@ -17,7 +17,7 @@ export default function ScanSampah() {
   const [isLoading, setIsLoading] = useState(true);
 
   const modelURL = process.env.NEXT_PUBLIC_MODEL_URL;
-
+  
   useEffect(() => {
     loadModel();
   }, []);

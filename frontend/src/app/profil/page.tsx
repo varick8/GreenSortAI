@@ -55,7 +55,7 @@ export default function Profile() {
     if (!user) return <Loading />;
 
     return (
-        <div className="flex items-center justify-center bg-white min-h-[87vh]">
+        <div className="flex items-center justify-center bg-white min-h-screen">
             <div className="flex flex-col md:flex-col lg:flex-row items-center gap-8 md:gap-20 lg:gap-10 w-full max-w-md md:max-w-2xl lg:max-w-4xl px-4">
                 {/* Profile Card */}
                 <div 
