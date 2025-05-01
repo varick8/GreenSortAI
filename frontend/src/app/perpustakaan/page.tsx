@@ -1,172 +1,196 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Loading from "@/components/Loading";
-import Slider from "react-slick";
+import { useState } from "react";
 import Link from "next/link";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+
+export interface InformationCard {
+  id: string;
+  image: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+}
+
+export const cardData: InformationCard[] = [
+  {
+    id: "1",
+    image: "/perpus1.svg",
+    title: "Mengurangi Food Waste",
+    description:
+      "Detail lengkap untuk informasi 1. Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor.",
+    date: "27-02-2025",
+    time: "20:18",
+  },
+  {
+    id: "2",
+    image: "/perpus2.svg",
+    title: "Analisis Resiko Lingkungan",
+    description:
+      "Detail lengkap untuk informasi 2. Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor.",
+    date: "27-02-2025",
+    time: "20:18",
+  },
+  {
+    id: "3",
+    image: "/perpus3.svg",
+    title: "Gerakan Sedekah Sampah: blabla",
+    description:
+      "Detail lengkap untuk informasi 3. Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor.",
+    date: "27-02-2025",
+    time: "20:18",
+  },
+  {
+    id: "4",
+    image: "/perpus4.svg",
+    title: "Judul Lorem Ipsum dolor sit amet",
+    description:
+      "Detail lengkap untuk informasi 4. 0rem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor.",
+    date: "27-02-2025",
+    time: "20:18",
+  },
+  {
+    id: "5",
+    image: "/perpus5.svg",
+    title: "Title",
+    description:
+      "Detail lengkap untuk informasi 5. Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor.",
+    date: "27-02-2025",
+    time: "20:18",
+  },
+];
 
 export default function Perpustakaan() {
-  const [loading, setLoading] = useState(true);
-  const [centerIndex, setCenterIndex] = useState(0); // posisi tengah default
-  const sliderRef = useRef<Slider | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 5;
+  const [filterTitle, setFilterTitle] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
+  const [filterFocus, setFilterFocus] = useState("");
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
-
-  if (loading) return <Loading />;
-
-  const cards = [
-    {
-      id: "1",
-      image: "/perpus1.svg",
-      title: "Judul Informasi 1",
-      description: "Deskripsi singkat tentang informasi 1.",
-    },
-    {
-      id: "2",
-      image: "/perpus2.svg",
-      title: "Judul Informasi 2",
-      description: "Deskripsi singkat tentang informasi 2.",
-    },
-    {
-      id: "3",
-      image: "/perpus3.svg",
-      title: "Judul Informasi 3",
-      description: "Deskripsi singkat tentang informasi 3.",
-    },
-    {
-      id: "4",
-      image: "/perpus4.svg",
-      title: "Judul Informasi 4",
-      description: "Deskripsi singkat tentang informasi 4.",
-    },
-    {
-      id: "5",
-      image: "/perpus5.svg",
-      title: "Judul Informasi 5",
-      description: "Deskripsi singkat tentang informasi 5.",
-    },
-  ];
-
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 5,
-    slidesToScroll: 1,
-    centerMode: true,
-    centerPadding: "0px",
-    arrows: false,
-    beforeChange: (oldIndex: number, newIndex: number) => {
-      const centerOffset = Math.floor(5 / 2 - 1);
-      const newCenter = (newIndex + centerOffset) % cards.length;
-      setCenterIndex(newCenter);
-    },
-    customPaging: (i: number) => (
-      <div className="w-4 h-4 bg-gray-600 rounded-full transition-all duration-300"></div>
-    ),
-    dotsClass: "slick-dots !absolute left-1/2 -translate-x-1/2 bottom-[-80px] flex justify-center gap-3",
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          centerMode: false,
-        },
-      },
-    ],
+  const handleResetFilters = () => {
+    setFilterTitle("");
+    setFilterCategory("");
+    setFilterFocus("");
   };
-  
-  const ArrowButton = ({
-    direction,
-  }: {
-    direction: "left" | "right";
-  }) => {
-    // Sembunyikan panah kalau belum ada slide
-    if (cards.length === 0) return null;
-  
-    return (
-      <button
-        onClick={() =>
-          direction === "left"
-            ? sliderRef.current?.slickPrev()
-            : sliderRef.current?.slickNext()
-        }
-        className={`absolute top-1/2 z-30 -translate-y-1/2 bg-gray-500 shadow-xl rounded-full p-2 text-white hover:bg-gray-700 ${
-          direction === "left" ? "left-0 -translate-x-full" : "right-0 translate-x-full"
-        }`}
-      >
-        {direction === "left" ? "<" : ">"}
-      </button>
-    );
-  };
-  
+
+  const filteredData = cardData.filter((item) =>
+    (filterTitle === "" ||
+      item.title.toLowerCase().includes(filterTitle.toLowerCase())) &&
+    (filterCategory === "" || item.title.includes(filterCategory)) &&
+    (filterFocus === "" || item.description.includes(filterFocus))
+  );
+
+  const indexOfLastRecord = currentPage * recordsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+  const currentRecords = filteredData.slice(indexOfFirstRecord, indexOfLastRecord);
+  const totalPages = Math.ceil(filteredData.length / recordsPerPage);
 
   return (
-    <div className="container mx-auto px-4 py-12 bg-gray-100 relative">
-      <h1 className="text-center text-4xl font-bold mb-12">Perluas Wawasanmu dengan Membaca!</h1>
+    <div className="min-h-screen bg-gray-100">
+      <main className="container mx-auto px-4 py-8">
+        {/* Filter Controls */}
+        <div className="mb-6 flex flex-col md:flex-row md:items-end justify-start md:space-x-4 space-y-4 md:space-y-0">
+          <input
+            type="text"
+            value={filterTitle}
+            onChange={(e) => setFilterTitle(e.target.value)}
+            className="border-gray-300 p-2 rounded"
+            placeholder="Cari judul informasi..."
+          />
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="border-gray-300 p-2 rounded"
+          >
+            <option value="">Kategori Informasi</option>
+            <option value="Lingkungan">Lingkungan</option>
+            <option value="Ekonomi">Ekonomi</option>
+          </select>
+          <select
+            value={filterFocus}
+            onChange={(e) => setFilterFocus(e.target.value)}
+            className="border-gray-300 p-2 rounded"
+          >
+            <option value="">Fokus Isu</option>
+            <option value="Daur Ulang">Daur Ulang</option>
+            <option value="Pengelolaan Sampah">Pengelolaan Sampah</option>
+          </select>
+          <button
+            onClick={handleResetFilters}
+            className="px-4 py-2 bg-green-600 text-white rounded"
+          >
+            Reset Filter
+          </button>
+        </div>
 
-      <div className="relative">
-        <Slider ref={sliderRef} {...settings}>
-          {cards.map((card, index) => {
-            const isActive = index === centerIndex;   
-            return (
-              <div key={card.id} className="px-2">
-                <div
-                  className={`
-                    relative rounded-xl transition-all duration-500 
-                    ${
-                      isActive
-                        ? "scale-[1.15] bg-white shadow-2xl z-20 overflow-visible" 
-                        : "scale-90 bg-gray-200 opacity-80 blur-[0.5px] overflow-hidden"
-                    }
-                  `}
-                >
-                  <img
-                    src={card.image}
-                    alt={card.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <h2 className="text-xl font-bold mb-2">{card.title}</h2>
-                    <p className="text-gray-700 mb-4">{card.description}</p>
-                    <Link
-                      href={`/detail/${card.id}`}
-                      className="bg-blue-600 text-white px-4 py-2 rounded w-full text-center block"
-                    >
-                      Selengkapnya
-                    </Link>
-                  </div>
-                  
-                  {isActive && (
-                    <>
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2">
-                        <ArrowButton direction="left" />
-                      </div>
-                      <div className="absolute right-0 top-1/2 -translate-y-1/2">
-                        <ArrowButton direction="right" />
-                      </div>
-                    </>
-                  )}
-
+        {/* Daftar Kartu */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          {currentRecords.map((card) => (
+            <div
+              key={card.id}
+              className="bg-white rounded-lg shadow overflow-hidden flex flex-col"
+            >
+              <img
+                src={card.image}
+                alt={card.title}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4 flex flex-col space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">
+                    Berita
+                  </span>
+                  <span className="text-gray-500 text-xs">
+                    {card.date} {card.time}
+                  </span>
                 </div>
+                <h2 className="font-bold text-lg truncate">
+                  {card.title}
+                </h2>
+                <p className="text-gray-700 text-sm whitespace-pre-line">
+                  {card.description.split("\n").slice(0, 5).join("\n")}
+                </p>
+                <Link href={`/detail/${card.id}`}>
+                  <button className="px-4 py-2 bg-blue-600 text-white rounded">
+                    Selengkapnya
+                  </button>
+                </Link>
               </div>
-            );
-          })}
-        </Slider>
-      </div>
+            </div>
+          ))}
+        </div>
 
-      <style jsx global>{`
-        .slick-dots li.slick-active div {
-          background-color:#22c55e; /* Tailwind green-500 */
-          transform: scale(1.25);
-        }
-      `}</style>
+        {/* Pagination */}
+        <div className="mt-8 flex justify-center items-center space-x-2">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-3 py-1 rounded ${
+                currentPage === i + 1 ? "bg-black text-white" : "bg-gray-300"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      </main>
     </div>
   );
 }

@@ -1,123 +1,97 @@
 "use client";
 
-import Loading from "@/components/Loading";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+
+const cardDetails: Record<string, { title: string; description: string; image: string }> = {
+  "1": { title: "Mengurangi Food Waste", description: "Detail lengkap untuk informasi 1. Lorem Ipsum Dolor Lorem Ipsu Lorem Ipsum Dolorm Dolor", image: "/perpus1.svg" },
+  "2": { title: "Analisis Resiko Lingkungan", description: "Detail lengkap untuk informasi 2. Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor", image: "/perpus2.svg" },
+  "3": { title: "Gerakan Sedekah Sampah", description: "Detail lengkap untuk informasi 3. Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor", image: "/perpus3.svg" },
+  "4": { title: "Judul Informasi 4", description: "Detail lengkap untuk informasi 4. Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor", image: "/perpus4.svg" },
+  "5": { title: "Judul Informasi 5", description: "Detail lengkap untuk informasi 5.Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor Lorem Ipsum Dolor", image: "/perpus5.svg" },
+};
 
 export default function DetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-    }, []);
-  
-    if (loading) return <Loading />;
-  // Static detail data; in a real app, fetch data based on params.id
-    const cardDetails: Record<string, { title: string; description: string; image: string }> = {
-    "1": {
-      title: "Mengurangi Food Waste",
-      description: "Detail lengkap untuk informasi 1.",
-      image: "/perpus1.svg"
-    },
-    "2": {
-      title: "Analisis Resiko Lingkungan",
-      description: "Detail lengkap untuk informasi 2.",
-      image: "/perpus2.svg"
-    },
-    "3": {
-      title: "Gerakan Sedekah Sampah",
-      description: "Detail lengkap untuk informasi 3.",
-      image: "/perpus3.svg"
-    },
-    "4": {
-      title: "Judul Informasi 4",
-      description: "Detail lengkap untuk informasi 4.",
-      image: "/perpus4.svg"
-    },
-    "5": {
-      title: "Judul Informasi 5",
-      description: "Detail lengkap untuk informasi 5.",
-      image: "/perpus5.svg"
-    }
-  };
-
-  const currentId = params.id;
-  const detail = cardDetails[currentId];
-
   const [searchTerm, setSearchTerm] = useState("");
 
-  if (!detail) {
-    return <p>Data tidak ditemukan.</p>;
-  }
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
 
-  // Prepare related articles by filtering out the currentId
+  if (loading) return <div>Loading...</div>;
+
+  const detail = cardDetails[id];
+  if (!detail) return <p>Data tidak ditemukan.</p>;
+
   const relatedArticles = Object.entries(cardDetails)
-    .filter(([id]) => id !== currentId)
-    .map(([id, data]) => ({
-      id,
-      ...data
-    }))
-    .filter((article)=>
+    .filter(([key]) => key !== id)
+    .map(([key, data]) => ({ id: key, ...data }))
+    .filter((article) =>
       article.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    );
 
   return (
-    <div className="container mx-auto p-4">
-      <Link 
-        href="/perpustakaan" 
-        className="text-blue-600 underline mb-4 inline-block"
-      >
-        Kembali
-      </Link>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main detail section */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <img 
-              src={detail.image} 
-              alt={detail.title} 
-              className="w-full h-96 object-cover rounded-lg mb-4" 
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Konten utama */}
+        <div className="lg:col-span-3">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <img
+              src={detail.image}
+              alt={detail.title}
+              className="w-full h-[400px] object-cover rounded-md mb-6"
             />
-            <h1 className="text-3xl font-bold mb-2">{detail.title}</h1>
-            <p className="text-sm text-gray-500 mb-4">27-02-2025 20:18</p>
-            <p className="text-gray-700 mb-4">{detail.description}</p>
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">{detail.title}</h1>
+            <p className="text-gray-500 text-sm mb-6">27-02-2025 20:18</p>
+            <div className="text-gray-700 space-y-4">
+              <p>{detail.description}</p>
+              {/* Tambahkan paragraf dummy seperti di gambar jika diperlukan */}
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam pharetra sit amet ligula id hendrerit...
+              </p>
+              <p>
+                Nulla facilisi. Sed nec ex quis, euismod condimentum et. Orci varius natoque penatibus...
+              </p>
+              <p>
+                Curabitur eu risus augu fermentum vehicula. Nullam ut diam tortor.
+              </p>
+              {/* dan seterusnya sesuai kebutuhan */}
+            </div>
           </div>
         </div>
-        {/* Related articles section */}
-        <div className="space-y-4 max-h-[80vh] overflow-y-auto">
+
+        {/* Sidebar artikel terkait */}
+        <div className="space-y-4">
           <input
-            type="text" 
-            placeholder="Cari artikel..." 
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400" 
-            value={searchTerm} 
+            type="text"
+            placeholder="Cari artikel..."
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-
-          <h2 className="text-2xl font-bold mb-4">Artikel Terkait</h2>
-          {relatedArticles.map((article) => (
-            <Link 
-              key={article.id} 
-              href={`/detail/${article.id}`} 
-              className="flex bg-white rounded-lg shadow p-2 hover:shadow-xl transition-shadow duration-200"
-            >
-              <div className="flex flex-col">
-                <img 
-                  src={article.image} 
-                  alt={article.title} 
-                  className="w-40 h-40 object-cover rounded-md mr-3" 
+          <h2 className="text-2xl font-bold">Artikel Terkait</h2>
+          <div className="space-y-4 max-h-[700px] overflow-y-auto pr-2">
+            {relatedArticles.map((article) => (
+              <Link
+                key={article.id}
+                href={`/detail/${article.id}`}
+                className="flex flex-col bg-white rounded-lg shadow-md p-3 hover:shadow-lg transition"
+              >
+                <img
+                  src={article.image}
+                  alt={article.title}
+                  className="w-full h-40 object-cover rounded-md mb-2"
                 />
-                <div className="flex flex-col justify-between">
-                  <p className="text-sm text-gray-400">Berita</p>
-                  <h3 className="text-xl font-semibold">{article.title}</h3>
-                </div>
-                <p className="text-gray-600 text-sm mt-1">
-                  {article.description.substring(0, 60)}...
-                </p>
-              </div>
-            </Link>
-          ))}
+                <p className="text-sm text-gray-400">Berita</p>
+                <h3 className="text-lg font-semibold text-gray-800">{article.title}</h3>
+                <p className="text-sm text-gray-600 mt-1">{article.description.substring(0, 60)}...</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>
