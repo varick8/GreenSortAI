@@ -21,10 +21,8 @@ func AddLibrary(c *fiber.Ctx) error {
 		"msg":        "Add Library",
 	}
 
-	// Extract user_id from request parameters
 	userID := c.Params("user_id")
 
-	// Check if user exists
 	var user models.User
 	if err := database.DB.First(&user, "id = ?", userID).Error; err != nil {
 		log.Println("User not found:", userID)
@@ -33,7 +31,6 @@ func AddLibrary(c *fiber.Ctx) error {
 		return c.Status(404).JSON(context)
 	}
 
-	// Role check: Only admins can add a library
 	if user.Role != "admin" {
 		log.Println("Unauthorized: User is not an admin.")
 		context["statusText"] = "Error"
@@ -41,70 +38,48 @@ func AddLibrary(c *fiber.Ctx) error {
 		return c.Status(403).JSON(context)
 	}
 
-	// Parse request body into Library struct
+	// Manual parsing for form-data
 	record := new(models.Library)
-	if err := c.BodyParser(record); err != nil {
-		log.Println("Error in parsing request body.")
-		log.Println("BodyParser error:", err)
-		context["statusText"] = "Error"
-		context["msg"] = "Invalid request payload."
-		return c.Status(400).JSON(context)
-	}
+	record.Title = c.FormValue("title")
+	record.Focus = c.FormValue("focus")
+	record.Category = c.FormValue("category")
+	record.Content = c.FormValue("content")
 
-	// Validate required fields
-	if record.Title == "" {
-		log.Println("Title is required.")
-		context["statusText"] = "Error"
-		context["msg"] = "Title is required."
-		return c.Status(400).JSON(context)
-	}
-
-	if record.Focus == "" {
-		log.Println("Focus is required.")
-		context["statusText"] = "Error"
-		context["msg"] = "Focus is required."
-		return c.Status(400).JSON(context)
-	}
-
-	if record.Category == "" {
-		log.Println("Category is required.")
-		context["statusText"] = "Error"
-		context["msg"] = "Category is required."
-		return c.Status(400).JSON(context)
-	}
-
-	if record.Content == "" {
-		log.Println("Content is required.")
-		context["statusText"] = "Error"
-		context["msg"] = "Content is required."
-		return c.Status(400).JSON(context)
-	}
-
-	if record.Source == "" {
+	sourceStr := c.FormValue("source") // expected: "https://a.com,https://b.com"
+	if sourceStr != "" {
+		record.Source = strings.Split(sourceStr, ",")
+	} else {
 		log.Println("Source is required.")
 		context["statusText"] = "Error"
 		context["msg"] = "Source is required."
 		return c.Status(400).JSON(context)
 	}
 
-	if record.Date == "" {
+	dateStr := c.FormValue("date")
+	if dateStr == "" {
 		log.Println("Date is required.")
 		context["statusText"] = "Error"
 		context["msg"] = "Date is required."
 		return c.Status(400).JSON(context)
 	}
-
-	parsedDate, err := time.Parse("2006-01-02", record.Date)
+	parsedDate, err := time.Parse("2006-01-02", dateStr)
 	if err != nil {
 		log.Println("Invalid date format:", err)
 		context["statusText"] = "Error"
 		context["msg"] = "Date must be in YYYY-MM-DD format."
 		return c.Status(400).JSON(context)
 	}
-
 	record.Date = parsedDate.Format("2006-01-02")
 
-	// File upload
+	// Validation
+	if record.Title == "" || record.Focus == "" || record.Category == "" || record.Content == "" {
+		log.Println("All fields are required.")
+		context["statusText"] = "Error"
+		context["msg"] = "All fields must be filled."
+		return c.Status(400).JSON(context)
+	}
+
+	// Image upload
 	file, err := c.FormFile("image")
 	if err != nil || file == nil {
 		log.Println("Image is required.")
@@ -113,7 +88,6 @@ func AddLibrary(c *fiber.Ctx) error {
 		return c.Status(400).JSON(context)
 	}
 
-	// Extract file extension and ensure it's allowed
 	ext := strings.ToLower(filepath.Ext(file.Filename))
 	allowedExtensions := map[string]bool{".jpg": true, ".jpeg": true, ".png": true}
 	if !allowedExtensions[ext] {
@@ -123,17 +97,11 @@ func AddLibrary(c *fiber.Ctx) error {
 		return c.Status(400).JSON(context)
 	}
 
-	// Generate a random number for uniqueness
 	rand.Seed(time.Now().UnixNano())
 	randomNum := rand.Intn(1000000)
-
-	// Generate the filename (without directory)
 	filenameOnly := fmt.Sprintf("%s_%d%s", userID, randomNum, ext)
-
-	// Full file path for saving
 	filePath := "./static/uploads/library/" + filenameOnly
 
-	// Save the uploaded file
 	if err := c.SaveFile(file, filePath); err != nil {
 		log.Println("Error in file uploading:", err)
 		context["statusText"] = "Error"
@@ -141,13 +109,9 @@ func AddLibrary(c *fiber.Ctx) error {
 		return c.Status(500).JSON(context)
 	}
 
-	// Save only the filename in the database
 	record.Image = filenameOnly
-
-	// Associate the Library with the User in the many-to-many relationship
 	record.UserID = user.ID
 
-	// Save record to the database
 	result := database.DB.Create(record)
 	if result.Error != nil {
 		log.Println("Error in saving data:", result.Error)
@@ -328,8 +292,17 @@ func EditLibrary(c *fiber.Ctx) error {
 	if updateData.Content == "" {
 		updateData.Content = library.Content
 	}
-	if updateData.Source == "" {
-		updateData.Source = library.Source
+	if len(updateData.Source) == 0 {
+		updateData.Source = library.Source // Keep existing sources if not provided
+	} else {
+		// If Source is provided, split it into a slice of strings
+		sources := c.FormValue("source") // Ambil nilai form "source"
+		if sources != "" {
+			updateData.Source = strings.Split(sources, ",")
+		} else {
+			// Jika kosong, gunakan nilai lama
+			updateData.Source = library.Source
+		}
 	}
 	if updateData.Date == "" {
 		updateData.Date = library.Date

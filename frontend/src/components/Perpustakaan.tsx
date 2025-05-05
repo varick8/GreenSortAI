@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import Loading from './Loading';
+import { useRouter } from "next/navigation";
 
 interface Slide {
   id: string;
@@ -14,22 +15,12 @@ interface Slide {
   date: string;
 }
 
-const defaultSlides: Slide[] = [
-  {
-    id: "1",
-    image: "/perpus1.svg",
-    category: "Lingkungan",
-    title: "Food Waste",
-    content: "Preview of the news or education. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    date: "24-04-2025",
-  },
-];
-
 export default function Perpustakaan() {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [slides, setSlides] = useState<Slide[]>(defaultSlides); // Set default data initially
+  const [slides, setSlides] = useState<Slide[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSlides = async () => {
@@ -41,12 +32,11 @@ export default function Perpustakaan() {
         const data = await res.json();
         const sorted = data.library_records
           .sort((a: Slide, b: Slide) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .slice(0, 5); // Only take the top 5 items
+          .slice(0, 5);
         setSlides(sorted);
       } catch (error) {
         console.error('Failed to fetch:', error);
-        // If fetching fails, use default data
-        setSlides(defaultSlides);
+        setSlides([]); // Tetap kosong jika gagal
       } finally {
         setLoading(false);
       }
@@ -106,7 +96,7 @@ export default function Perpustakaan() {
   return (
     <div className="w-full max-w-7xl mx-auto py-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-black">Perluas Wawasanmu dengan Membaca!</h1>
+        <h1 className="text-3xl font-bold text-black mb-3">Perluas Wawasanmu dengan Membaca!</h1>
       </div>
 
       <div className="relative">
@@ -155,7 +145,7 @@ export default function Perpustakaan() {
 
                   <div className="bg-white shadow-lg rounded-lg overflow-hidden h-full flex flex-col">
                     <div className="relative h-28">
-                    <img
+                      <img
                         src={`http://localhost:8080/api/library/image/${slide.image}`}
                         alt={slide.title}
                         className="w-full h-full object-cover"
@@ -165,10 +155,16 @@ export default function Perpustakaan() {
                       </span>
                     </div>
                     <div className="p-4 flex flex-col flex-grow">
-                      <p className="text-xs text-gray-500">{new Date(slide.date).toLocaleDateString('en-GB').split('/').join('-')}</p>
-                      <h3 className="font-semibold text-lg mb-2 text-black">{slide.title}</h3>
+                      <p className="text-xs text-gray-500">
+                        {new Date(slide.date).toLocaleDateString('en-GB').split('/').join('-')}
+                      </p>
+                      <h3 className="font-semibold text-lg mb-1 text-black truncate">{slide.title}</h3>
                       <p className="text-gray-600 text-sm flex-grow line-clamp-3">{slide.content}</p>
-                      <button className="text-blue-500 text-sm mt-3 self-start">Selengkapnya</button>
+                      <button
+                        onClick={() => router.push(`/perpustakaan/${slide.id}`)}
+                        className="text-blue-500 text-sm mt-2 self-start">
+                        Selengkapnya
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -189,10 +185,12 @@ export default function Perpustakaan() {
       </div>
 
       <div className="text-center mt-6">
-      <Link href="/perpustakaan">
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md">
-          Lihat Semua
-        </button>
+        <Link href="/perpustakaan">
+          <button
+          onClick={() => router.push('/perpustakaan')}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md">
+            Lihat Semua
+          </button>
         </Link>
       </div>
     </div>
