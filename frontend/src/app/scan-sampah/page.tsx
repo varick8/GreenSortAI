@@ -71,25 +71,11 @@ export default function ScanSampah() {
     if (isLoading) return <Loading />;
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-white p-10">
-            <div
-                style={{
-                    display: 'flex',
-                    width: '1111px',
-                    height: '507px',
-                    padding: '40px',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flexShrink: 0,
-                    borderRadius: '8px',
-                    border: '1px dashed #99C0FF',
-                    background: 'rgba(0, 0, 0, 0.25)',
-                }}
-            >
+        <main className="min-h-screen flex items-center justify-center bg-white p-4 sm:p-8 md:p-10">
+            <div className="w-full max-w-4xl h-auto sm:h-[507px] p-6 sm:p-10 flex flex-col items-center justify-center rounded-lg border border-dashed border-[#99C0FF] bg-black bg-opacity-25">
                 <div className="text-center mb-8">
-                    <h1 className="text-xl font-bold text-[#090E24]">Scan Sampah</h1>
-                    <p className="text-sm text-[#090E24] mt-2">
+                    <h1 className="text-xl font-bold text-black">Scan Sampah</h1>
+                    <p className="text-sm text-black mt-2">
                         Upload file gambar sampah dengan format .jpg, .jpeg, dan .png
                     </p>
                 </div>
@@ -115,8 +101,8 @@ export default function ScanSampah() {
 
                 {/* Modal Pop-up */}
                 {showModal && prediction && previewURL && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl p-6 relative flex gap-6">
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+                        <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl p-4 relative flex flex-col md:flex-row gap-4 md:gap-6 overflow-y-auto max-h-[90vh]">
                             {/* Tombol Tutup */}
                             <button
                                 onClick={() => setShowModal(false)}
@@ -126,16 +112,16 @@ export default function ScanSampah() {
                             </button>
 
                             {/* Gambar */}
-                            <div className="w-1/2">
+                            <div className="w-full md:w-1/2">
                                 <img
                                     src={previewURL}
                                     alt="Uploaded"
-                                    className="rounded-md w-full h-auto object-contain"
+                                    className="rounded-md w-full h-auto object-contain max-h-[300px] md:max-h-[400px]"
                                 />
                             </div>
 
                             {/* Hasil */}
-                            <div className="w-1/2 flex flex-col justify-start">
+                            <div className="w-full md:w-1/2 flex flex-col justify-start">
                                 <h2 className="text-xl font-semibold text-black mb-3">Hasil Prediksi</h2>
 
                                 <div className="bg-green-100 border border-green-300 p-4 rounded mb-4">
