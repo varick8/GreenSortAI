@@ -18,18 +18,6 @@ interface LibraryArticle {
   source: string[];
 }
 
-interface RelatedArticle {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
-  image: string;
-  category: string;
-  focus: string;
-  source: string[];
-}
-
-
 
 export default function DetailPage() {
   const params = useParams();
