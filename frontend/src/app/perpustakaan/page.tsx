@@ -36,7 +36,7 @@ export default function Perpustakaan() {
         const data = await res.json();
         
         // Format the date and map the response to match our InformationCard interface
-        const formattedData = (data.library_records as InformationCard[]).map((record) => {
+        const formattedData = data.library_records.map((record: any) => {
           // Convert date format (assuming the API returns date in ISO format)
           let formattedDate = record.date;
           try {
