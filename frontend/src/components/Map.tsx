@@ -19,6 +19,7 @@ type MarkerData = {
 
 type MapProps = {
     data: MarkerData[];
+    selectedCategory: string;
 };
 
 export default function Map({ data }: MapProps) {

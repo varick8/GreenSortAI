@@ -2941,6 +2941,7 @@ export default function WasteManagementMap({
     className = ""
 }: WasteManagementMapProps) {
     const [selectedCategory, setSelectedCategory] = useState<Category>(initialCategory);
+    
 
     return (
         <div className={`flex flex-col items-center ${className}`}>
