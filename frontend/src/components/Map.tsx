@@ -18,11 +18,10 @@ type MarkerData = {
 };
 
 type MapProps = {
-    selectedCategory: string;
     data: MarkerData[];
 };
 
-export default function Map({ selectedCategory, data }: MapProps) {
+export default function Map({ data }: MapProps) {
     // Create the marker icon
     const [icon, setIcon] = useState<L.Icon | null>(null);
 
