@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import Loading from './Loading';
 import { useRouter } from "next/navigation";
+import Image from 'next/image';
 
 interface Slide {
   id: string;
@@ -145,9 +146,11 @@ export default function Perpustakaan() {
 
                   <div className="bg-white shadow-lg rounded-lg overflow-hidden h-full flex flex-col">
                     <div className="relative h-28">
-                      <img
+                     <Image
                         src={`https://greensortai.up.railway.app/api/library/image/${slide.image}`}
                         alt={slide.title}
+                        width={800} // replace with appropriate width
+                        height={600} // replace with appropriate height
                         className="w-full h-full object-cover"
                       />
                       <span className="absolute top-2 left-2 text-xs bg-green-600 text-white px-2 py-1 rounded">
