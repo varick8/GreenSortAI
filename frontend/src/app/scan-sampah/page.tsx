@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import * as tmImage from '@teachablemachine/image';
 import Loading from '@/components/Loading';
 import { Upload, X } from 'lucide-react';
@@ -40,52 +40,48 @@ export default function ScanSampah() {
     const [isLoading, setIsLoading] = useState(true);
     const [recommendation, setRecommendation] = useState<string | null>(null);
 
-    const inputRef = useRef<HTMLInputElement>(null);
     const modelURL = process.env.NEXT_PUBLIC_MODEL_URL;
 
     useEffect(() => {
-        loadModel();
-        initializeUser();
-    }, []);
-
-    async function initializeUser() {
-        try {
-            const cookies = document.cookie;
-            const parsedCookies = parse(cookies);
-            const token = parsedCookies.auth_token;
-
-            if (token) {
-                const decodedToken = jwtDecode(token) as User;
-                if (decodedToken?.id) {
-                    setUser({ id: decodedToken.id });
-                }
+        async function loadModelAndUser() {
+            if (!modelURL) {
+                setError("Model URL is missing. Please check your environment variables.");
+                setIsLoading(false);
+                return;
             }
-        } catch (error) {
-            console.warn("Token tidak valid atau tidak ditemukan, melanjutkan tanpa user login.");
-        } finally {
-            setIsLoading(false);
-        }
-    }
 
-    async function loadModel() {
-        if (!modelURL) {
-            setError("Model URL is missing. Please check your environment variables.");
-            setIsLoading(false);
-            return;
+            try {
+                // Load model
+                const modelJson = `${modelURL}model.json`;
+                const metadataJson = `${modelURL}metadata.json`;
+                const loadedModel = await tmImage.load(modelJson, metadataJson);
+                setModel(loadedModel);
+            } catch (err) {
+                console.error("Error loading model:", err);
+                setError("Gagal memuat model.");
+            }
+
+            try {
+                // Initialize user
+                const cookies = document.cookie;
+                const parsedCookies = parse(cookies);
+                const token = parsedCookies.auth_token;
+
+                if (token) {
+                    const decodedToken = jwtDecode(token) as User;
+                    if (decodedToken?.id) {
+                        setUser({ id: decodedToken.id });
+                    }
+                }
+            } catch {
+                console.warn("Token tidak valid atau tidak ditemukan, melanjutkan tanpa user login.");
+            } finally {
+                setIsLoading(false);
+            }
         }
 
-        try {
-            const modelJson = `${modelURL}model.json`;
-            const metadataJson = `${modelURL}metadata.json`;
-            const loadedModel = await tmImage.load(modelJson, metadataJson);
-            setModel(loadedModel);
-        } catch (error) {
-            console.error("Error loading model:", error);
-            setError("Gagal memuat model.");
-        } finally {
-            setIsLoading(false);
-        }
-    }
+        loadModelAndUser();
+    }, [modelURL]);
 
     async function submitPrediction(
         userId: string,
@@ -107,8 +103,8 @@ export default function ScanSampah() {
             if (!response.ok) {
                 throw new Error("Gagal mengirim data ke server.");
             }
-        } catch (error) {
-            console.error("Error saat mengirim data:", error);
+        } catch (err) {
+            console.error("Error saat mengirim data:", err);
         }
     }
 
@@ -124,6 +120,7 @@ export default function ScanSampah() {
             const imgURL = URL.createObjectURL(file);
             img.src = imgURL;
             await img.decode();
+
             const predictions = await model.predict(img);
             const sorted = predictions.sort((a, b) => b.probability - a.probability);
             const predictionClass = sorted[0].className;
@@ -137,14 +134,8 @@ export default function ScanSampah() {
             if (user?.id) {
                 await submitPrediction(user.id, predictionClass, recommendationText, file);
             }
-
-            // Reset input so the same file can be re-uploaded
-            if (inputRef.current) {
-                inputRef.current.value = '';
-            }
-
-        } catch (error) {
-            console.error("Error processing image:", error);
+        } catch (err) {
+            console.error("Error processing image:", err);
             setError("Gagal memproses gambar.");
         }
     }
@@ -166,7 +157,6 @@ export default function ScanSampah() {
                         <Upload size={18} /> Unggah File
                     </div>
                     <input
-                        ref={inputRef}
                         id="upload"
                         type="file"
                         accept="image/*"
@@ -189,7 +179,6 @@ export default function ScanSampah() {
                                     setShowModal(false);
                                     setPreviewURL(null);
                                     setPrediction(null);
-                                    setRecommendation(null);
                                 }}
                                 className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
                             >
@@ -210,7 +199,6 @@ export default function ScanSampah() {
 
                             <div className="w-full md:w-1/2 flex flex-col justify-start">
                                 <h2 className="text-xl font-semibold text-black mb-3">Hasil Prediksi</h2>
-
                                 <div className="bg-green-100 border border-green-300 p-4 rounded mb-4">
                                     <p className="text-black font-bold">{prediction[0].className}</p>
                                 </div>
