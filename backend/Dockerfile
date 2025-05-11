@@ -1,5 +1,5 @@
 # Gunakan image Go sebagai base
-FROM golang:1.20
+FROM golang:1.24.1
 
 # Set environment variable agar binari Go tidak statis
 ENV CGO_ENABLED=0 \
