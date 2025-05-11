@@ -10,6 +10,7 @@ import Profile from "./Profile";
 import { parse } from "cookie";
 import { jwtDecode } from "jwt-decode"; 
 import HamburgerMenu from "./Hamburger";
+import Image from "next/image";
 
 // Define a custom interface for the decoded token
 interface User {
@@ -61,7 +62,7 @@ const Navbar = () => {
                         <div className="flex items-center gap-8 md:gap-12">
                             <div className="items-center space-x-2">
                                 <Link href="/" className="flex items-center space-x-2">
-                                    <img src={"/recycle.svg"} alt="logo" width={30} height={30} />
+                                    <Image src="/recycle.svg" alt="logo" width={30} height={30} />
                                     <div className="font-semibold text-black">GreenSortAI</div>
                                 </Link>
                             </div>

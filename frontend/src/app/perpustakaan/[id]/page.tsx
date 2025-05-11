@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
+import Image from "next/image";
 
 
 // Define interfaces locally
@@ -110,11 +111,14 @@ export default function DetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <img
+             <div className="w-full h-[300px] relative rounded-md mb-6 overflow-hidden">
+              <Image
                 src={`https://greensortai.up.railway.app/api/library/image/${articleData.image}`}
                 alt={articleData.title}
-                className="w-full h-[300px] object-cover rounded-md mb-6"
+                fill
+                className="object-cover rounded-md"
               />
+            </div>
               <h1 className="lg:text-3xl md:text-2xl text-xl font-bold text-gray-800 mb-2 sm:text-xl">{articleData.title}</h1>
               <p className="text-gray-500 text-sm mb-6">{articleData.date}</p>
               <div className="text-gray-700 space-y-4">
@@ -174,11 +178,14 @@ export default function DetailPage() {
                     href={`/perpustakaan/${article.id}`}
                     className="flex flex-col bg-white rounded-lg shadow-md p-3 hover:shadow-lg transition"
                   >
-                    <img
-                      src={`https://greensortai.up.railway.app/api/library/image/${article.image}`}
-                      alt={article.title}
-                      className="w-full h-40 object-cover rounded-md mb-2"
-                    />
+                    <div className="w-full h-40 relative rounded-md mb-2 overflow-hidden">
+                      <Image
+                        src={`https://greensortai.up.railway.app/api/library/image/${article.image}`}
+                        alt={article.title}
+                        layout="fill"
+                        objectFit="cover"
+                      />
+                    </div>
                     <div className="flex items-center justify-between">
                       <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">
                         {article.category}

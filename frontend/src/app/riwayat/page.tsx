@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { parse } from "cookie";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 // Define interfaces
 interface User {
@@ -153,11 +154,14 @@ export default function Riwayat() {
                                             <td className="border border-black px-2 md:px-4 lg:px-3 py-2 md:py-3 lg:py-2 text-center text-sm md:text-base lg:text-sm">{record.type}</td>
                                             <td className="border border-black px-2 md:px-4 lg:px-3 py-2 md:py-3 lg:py-2 text-justify text-sm md:text-base lg:text-sm md:min-w-[300px] lg:min-w-[400px]">{record.recommendation}</td>
                                             <td className="border border-black px-2 md:px-4 lg:px-3 py-2 md:py-3 lg:py-2 text-center">
-                                                <img
+                                             <div className="relative inline-block w-10 h-10 md:w-16 md:h-16 lg:w-12 lg:h-12">
+                                                <Image
                                                     src={`https://greensortai.up.railway.app/api/trash/image/${record.image}`}
                                                     alt="Trash"
-                                                    className="inline-block w-10 h-10 md:w-16 md:h-16 lg:w-12 lg:h-12 object-cover"
+                                                    fill
+                                                    className="object-cover rounded"
                                                 />
+                                                </div>
                                             </td>
                                         </tr>
                                     );

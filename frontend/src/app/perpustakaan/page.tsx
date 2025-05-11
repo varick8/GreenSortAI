@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/Loading";
+import Image from "next/image";
 
 export interface InformationCard {
   id: string;
@@ -156,10 +157,12 @@ export default function Perpustakaan() {
               className="bg-white rounded-lg shadow flex flex-col h-full"
             >
               <div className="w-full bg-gray-50 aspect-video relative">
-                <img
+               <Image
                   src={`https://greensortai.up.railway.app/api/library/image/${card.image}`}
                   alt={card.title}
-                  className="w-full h-full object-cover absolute inset-0"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-t-lg"
                 />
               </div>
               <div className="p-4 flex flex-col space-y-2 h-full">

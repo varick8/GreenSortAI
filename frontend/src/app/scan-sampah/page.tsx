@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as tmImage from '@teachablemachine/image';
 import Loading from '@/components/Loading';
 import { Upload, X } from 'lucide-react';
 import { jwtDecode } from "jwt-decode";
 import { parse } from 'cookie';
+import Image from 'next/image';
 
 interface Prediction {
     className: string;
@@ -39,19 +40,21 @@ export default function ScanSampah() {
     const [isLoading, setIsLoading] = useState(true);
     const [recommendation, setRecommendation] = useState<string | null>(null);
 
+    const inputRef = useRef<HTMLInputElement>(null);
     const modelURL = process.env.NEXT_PUBLIC_MODEL_URL;
 
     useEffect(() => {
         loadModel();
         initializeUser();
     }, []);
+
     async function initializeUser() {
         try {
             const cookies = document.cookie;
             const parsedCookies = parse(cookies);
             const token = parsedCookies.auth_token;
 
-           if (token) {
+            if (token) {
                 const decodedToken = jwtDecode(token) as User;
                 if (decodedToken?.id) {
                     setUser({ id: decodedToken.id });
@@ -120,21 +123,26 @@ export default function ScanSampah() {
             const img = document.createElement('img');
             const imgURL = URL.createObjectURL(file);
             img.src = imgURL;
-            setPreviewURL(imgURL);
-
             await img.decode();
             const predictions = await model.predict(img);
             const sorted = predictions.sort((a, b) => b.probability - a.probability);
             const predictionClass = sorted[0].className;
             const recommendationText = getRecommendation(predictionClass);
-           
+
             setPrediction(sorted);
             setRecommendation(recommendationText);
+            setPreviewURL(imgURL);
             setShowModal(true);
 
             if (user?.id) {
                 await submitPrediction(user.id, predictionClass, recommendationText, file);
             }
+
+            // Reset input so the same file can be re-uploaded
+            if (inputRef.current) {
+                inputRef.current.value = '';
+            }
+
         } catch (error) {
             console.error("Error processing image:", error);
             setError("Gagal memproses gambar.");
@@ -158,6 +166,7 @@ export default function ScanSampah() {
                         <Upload size={18} /> Unggah File
                     </div>
                     <input
+                        ref={inputRef}
                         id="upload"
                         type="file"
                         accept="image/*"
@@ -172,28 +181,33 @@ export default function ScanSampah() {
                     </div>
                 )}
 
-                {/* Modal Pop-up */}
                 {showModal && prediction && previewURL && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
                         <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl p-4 relative flex flex-col md:flex-row gap-4 md:gap-6 overflow-y-auto max-h-[90vh]">
-                            {/* Tombol Tutup */}
                             <button
-                                onClick={() => setShowModal(false)}
+                                onClick={() => {
+                                    setShowModal(false);
+                                    setPreviewURL(null);
+                                    setPrediction(null);
+                                    setRecommendation(null);
+                                }}
                                 className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
                             >
                                 <X size={24} />
                             </button>
 
-                            {/* Gambar */}
                             <div className="w-full md:w-1/2">
-                                <img
-                                    src={previewURL}
-                                    alt="Uploaded"
-                                    className="rounded-md w-full h-auto object-contain max-h-[300px] md:max-h-[400px]"
-                                />
+                                <div className="relative w-full h-[300px] md:h-[400px]">
+                                    <Image
+                                        src={previewURL}
+                                        alt="Uploaded"
+                                        fill
+                                        className="object-contain rounded-md"
+                                        sizes="(max-width: 768px) 100vw, 700px"
+                                    />
+                                </div>
                             </div>
 
-                            {/* Hasil */}
                             <div className="w-full md:w-1/2 flex flex-col justify-start">
                                 <h2 className="text-xl font-semibold text-black mb-3">Hasil Prediksi</h2>
 
@@ -201,12 +215,9 @@ export default function ScanSampah() {
                                     <p className="text-black font-bold">{prediction[0].className}</p>
                                 </div>
 
-                                {/* Rekomendasi Pengolahan */}
                                 <div className="bg-blue-50 border border-blue-200 p-4 rounded mb-4">
                                     <h3 className="font-medium text-blue-700 mb-1">Rekomendasi Pengolahan:</h3>
-                                    <p className="text-sm text-blue-800">
-                                        {recommendation}
-                                    </p>
+                                    <p className="text-sm text-blue-800">{recommendation}</p>
                                 </div>
                             </div>
                         </div>

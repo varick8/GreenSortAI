@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { parse } from 'cookie';
 import Loading from './Loading';
 import LoginModal from './auth/LoginModal';
+import Image from 'next/image';
 
 export default function Hero() {
     const [isLoading, setIsLoading] = useState(true);
@@ -69,10 +70,11 @@ export default function Hero() {
         <div className="relative w-full max-w-md px-6">
           <div className="bg-blue-100 rounded-full w-full aspect-square flex items-center justify-center p-6">
             {/* PNG image positioned to extend slightly beyond the circle */}
-            <img 
-              src="/trash.png" 
-              alt="Recycling illustration with bins" 
-              className="w-full h-full object-contain absolute transform scale-125"
+          <Image
+              src="/trash.png"
+              alt="Recycling illustration with bins"
+              fill
+              className="object-contain absolute transform scale-125"
             />
           </div>
         </div>
