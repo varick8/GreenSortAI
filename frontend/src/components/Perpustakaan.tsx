@@ -25,7 +25,7 @@ export default function Perpustakaan() {
   useEffect(() => {
     const fetchSlides = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/library');
+        const res = await fetch('https://greensortai.up.railway.app/api/library');
         if (!res.ok) {
           throw new Error('Failed to fetch');
         }
@@ -146,7 +146,7 @@ export default function Perpustakaan() {
                   <div className="bg-white shadow-lg rounded-lg overflow-hidden h-full flex flex-col">
                     <div className="relative h-28">
                       <img
-                        src={`http://localhost:8080/api/library/image/${slide.image}`}
+                        src={`https://greensortai.up.railway.app/api/library/image/${slide.image}`}
                         alt={slide.title}
                         className="w-full h-full object-cover"
                       />

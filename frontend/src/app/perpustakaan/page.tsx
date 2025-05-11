@@ -29,7 +29,7 @@ export default function Perpustakaan() {
     
     const fetchLibraryData = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/library');
+        const res = await fetch('https://greensortai.up.railway.app/api/library');
         if (!res.ok) {
           throw new Error('Failed to fetch');
         }
@@ -157,7 +157,7 @@ export default function Perpustakaan() {
             >
               <div className="w-full bg-gray-50 aspect-video relative">
                 <img
-                  src={`http://localhost:8080/api/library/image/${card.image}`}
+                  src={`https://greensortai.up.railway.app/api/library/image/${card.image}`}
                   alt={card.title}
                   className="w-full h-full object-cover absolute inset-0"
                 />
