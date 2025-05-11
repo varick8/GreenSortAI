@@ -19,9 +19,12 @@ import (
 var googleOauthConfig = &oauth2.Config{}
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
-		panic("Error loading .env file")
+	// Only load .env if running locally (i.e., not on Railway)
+	if os.Getenv("RAILWAY_ENVIRONMENT") == "" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Println("No .env file found (this is okay in production)")
+		}
 	}
 
 	googleOauthConfig = &oauth2.Config{
