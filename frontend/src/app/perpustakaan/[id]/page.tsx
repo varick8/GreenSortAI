@@ -32,7 +32,7 @@ export default function DetailPage() {
   useEffect(() => {
     const fetchLibraryData = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/library/${id}`);
+        const res = await fetch(`https://greensortai.up.railway.app/api/library/${id}`);
         if (!res.ok) throw new Error("Gagal mengambil data artikel.");
         const detail = await res.json();
         const record = detail.data[0];
@@ -53,7 +53,7 @@ export default function DetailPage() {
         setArticleData(articleWithFormattedDate);
   
         // Fetch all articles to find related
-        const allRes = await fetch(`http://localhost:8080/api/library`);
+        const allRes = await fetch(`https://greensortai.up.railway.app/api/library`);
         if (!allRes.ok) throw new Error("Gagal mengambil artikel terkait.");
         const allData = await allRes.json();
         const allArticles: LibraryArticle[] = allData.library_records;
@@ -111,7 +111,7 @@ export default function DetailPage() {
           <div className="lg:col-span-3">
             <div className="bg-white rounded-lg shadow-md p-6">
               <img
-                src={`http://localhost:8080/api/library/image/${articleData.image}`}
+                src={`https://greensortai.up.railway.app/api/library/image/${articleData.image}`}
                 alt={articleData.title}
                 className="w-full h-[300px] object-cover rounded-md mb-6"
               />
@@ -175,7 +175,7 @@ export default function DetailPage() {
                     className="flex flex-col bg-white rounded-lg shadow-md p-3 hover:shadow-lg transition"
                   >
                     <img
-                      src={`http://localhost:8080/api/library/image/${article.image}`}
+                      src={`https://greensortai.up.railway.app/api/library/image/${article.image}`}
                       alt={article.title}
                       className="w-full h-40 object-cover rounded-md mb-2"
                     />

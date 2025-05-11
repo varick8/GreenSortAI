@@ -4,25 +4,65 @@ import { useState, useEffect } from 'react';
 import * as tmImage from '@teachablemachine/image';
 import Loading from '@/components/Loading';
 import { Upload, X } from 'lucide-react';
+import { jwtDecode } from "jwt-decode";
+import { parse } from 'cookie';
 
 interface Prediction {
     className: string;
     probability: number;
 }
 
+interface User {
+    id: string;
+}
+
+function getRecommendation(predictionClass: string): string {
+    switch (predictionClass.toLowerCase()) {
+        case 'b3':
+            return "Gunakan tempat sampah B3 khusus. Hindari membuang ke tempat sampah biasa.";
+        case 'anorganic':
+            return "Simpan untuk daur ulang atau manfaatkan kembali jika memungkinkan.";
+        case 'organic':
+            return "Buang ke komposter atau tempat sampah organik untuk dijadikan pupuk.";
+        default:
+            return "Jenis sampah tidak dikenali. Mohon periksa kembali.";
+    }
+}
+
 export default function ScanSampah() {
     const [model, setModel] = useState<tmImage.CustomMobileNet | null>(null);
     const [prediction, setPrediction] = useState<Prediction[] | null>(null);
     const [previewURL, setPreviewURL] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [recommendation, setRecommendation] = useState<string | null>(null);
 
     const modelURL = process.env.NEXT_PUBLIC_MODEL_URL;
 
     useEffect(() => {
         loadModel();
+        initializeUser();
     }, []);
+    async function initializeUser() {
+        try {
+            const cookies = document.cookie;
+            const parsedCookies = parse(cookies);
+            const token = parsedCookies.auth_token;
+
+           if (token) {
+                const decodedToken = jwtDecode(token) as User;
+                if (decodedToken?.id) {
+                    setUser({ id: decodedToken.id });
+                }
+            }
+        } catch (error) {
+            console.warn("Token tidak valid atau tidak ditemukan, melanjutkan tanpa user login.");
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     async function loadModel() {
         if (!modelURL) {
@@ -36,11 +76,36 @@ export default function ScanSampah() {
             const metadataJson = `${modelURL}metadata.json`;
             const loadedModel = await tmImage.load(modelJson, metadataJson);
             setModel(loadedModel);
-            setIsLoading(false);
         } catch (error) {
             console.error("Error loading model:", error);
             setError("Gagal memuat model.");
+        } finally {
             setIsLoading(false);
+        }
+    }
+
+    async function submitPrediction(
+        userId: string,
+        predictionClass: string,
+        recommendation: string,
+        imageFile: File
+    ) {
+        const formData = new FormData();
+        formData.append('type', predictionClass);
+        formData.append('recommendation', recommendation);
+        formData.append('image', imageFile);
+
+        try {
+            const response = await fetch(`https://greensortai.up.railway.app/api/trash/scan/${userId}`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error("Gagal mengirim data ke server.");
+            }
+        } catch (error) {
+            console.error("Error saat mengirim data:", error);
         }
     }
 
@@ -60,8 +125,16 @@ export default function ScanSampah() {
             await img.decode();
             const predictions = await model.predict(img);
             const sorted = predictions.sort((a, b) => b.probability - a.probability);
+            const predictionClass = sorted[0].className;
+            const recommendationText = getRecommendation(predictionClass);
+           
             setPrediction(sorted);
+            setRecommendation(recommendationText);
             setShowModal(true);
+
+            if (user?.id) {
+                await submitPrediction(user.id, predictionClass, recommendationText, file);
+            }
         } catch (error) {
             console.error("Error processing image:", error);
             setError("Gagal memproses gambar.");
@@ -132,7 +205,7 @@ export default function ScanSampah() {
                                 <div className="bg-blue-50 border border-blue-200 p-4 rounded mb-4">
                                     <h3 className="font-medium text-blue-700 mb-1">Rekomendasi Pengolahan:</h3>
                                     <p className="text-sm text-blue-800">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Rekomendasi pengolahan sesuai jenis sampah ini.
+                                        {recommendation}
                                     </p>
                                 </div>
                             </div>

@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 // Define interfaces
 interface User {
-    id?: string;
+    id: string;
 }
 
 interface TrashRecord {
@@ -50,7 +50,7 @@ export default function Riwayat() {
 
         const fetchTrashData = async (userId: string) => {
             try {
-                const response = await fetch(`http://localhost:8080/api/trash/user/${userId}`);
+                const response = await fetch(`https://greensortai.up.railway.app/api/trash/user/${userId}`);
                 const data = await response.json();
         
                 if (data.statusText === "Ok") {
@@ -144,7 +144,7 @@ export default function Riwayat() {
                                 currentRecords.map((record) => {
                                     const dateTime = new Date(record.time);
                                     const date = dateTime.toLocaleDateString();
-                                    const time = dateTime.toLocaleTimeString();
+                                    const time = dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                                     return (
                                         <tr key={record.id} className="bg-gray-100 text-black">
@@ -154,7 +154,7 @@ export default function Riwayat() {
                                             <td className="border border-black px-2 md:px-4 lg:px-3 py-2 md:py-3 lg:py-2 text-justify text-sm md:text-base lg:text-sm md:min-w-[300px] lg:min-w-[400px]">{record.recommendation}</td>
                                             <td className="border border-black px-2 md:px-4 lg:px-3 py-2 md:py-3 lg:py-2 text-center">
                                                 <img
-                                                    src={`http://localhost:8080/api/trash/image/${record.image}`}
+                                                    src={`https://greensortai.up.railway.app/api/trash/image/${record.image}`}
                                                     alt="Trash"
                                                     className="inline-block w-10 h-10 md:w-16 md:h-16 lg:w-12 lg:h-12 object-cover"
                                                 />
@@ -164,7 +164,7 @@ export default function Riwayat() {
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan={5} className="border border-black px-4 py-2 md:py-3 lg:py-2 text-center text-sm md:text-base lg:text-sm">
+                                    <td colSpan={5} className="border text-black border-black px-4 py-2 md:py-3 lg:py-2 text-center text-sm md:text-base lg:text-sm">
                                         No records found.
                                     </td>
                                 </tr>
